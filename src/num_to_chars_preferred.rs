@@ -15,6 +15,20 @@ pub enum Digit {
     Num100,
 }
 
+pub fn pekzep_integer(num: i64) -> Vec<Digit> {
+    use std::cmp::Ordering;
+    use Digit::*;
+    match num.cmp(&0) {
+        Ordering::Greater => less_than_10000(num),
+        Ordering::Equal => vec![Num00],
+        Ordering::Less => {
+            let mut ans = vec![Neg];
+            ans.extend(&less_than_10000(-num));
+            ans
+        }
+    }
+}
+
 pub fn less_than_10000(num: i64) -> Vec<Digit> {
     use Digit::*;
     if num >= 200 {
@@ -34,12 +48,6 @@ pub fn less_than_10000(num: i64) -> Vec<Digit> {
             less_than_10000(num % 100)
         });
         return ans;
-    } else if num < 0 {
-        let mut ans = vec![Neg];
-        ans.extend(&less_than_10000(-num));
-        return ans;
-    } else if num == 0 {
-        return vec![Num00];
     }
 
     let last_digit_arr: Vec<Digit> = match num % 10 {
