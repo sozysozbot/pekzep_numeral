@@ -1,0 +1,13 @@
+[package]
+name = "pekzep_numeral"
+version = "0.1.0"
+authors = ["jekto_vatimeliju <jekto.vatimeliju@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "See https://github.com/jurliyuuri/ckka#%E6%95%B0%E3%81%AE%E8%A1%A8%E7%8F%BE%E6%96%B9%E6%B3%95 and http://jurliyuuri.github.io/lin-marn/lin-marn.html#id317 for more context."
+repository = "https://github.com/sozysozbot/pekzep_numeral"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
