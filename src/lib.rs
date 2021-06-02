@@ -22,4 +22,4 @@ pub fn str_to_num(s: &str) -> Option<i64> {
 }
 
 mod chars_to_num;
-mod num_to_chars_preferred;
+pub mod num_to_chars_preferred;
