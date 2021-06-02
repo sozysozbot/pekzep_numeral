@@ -15,31 +15,28 @@ pub enum Digit {
     Num100,
 }
 
-pub fn to_digits(num: i64) -> Vec<Digit> {
+pub fn less_than_10000(num: i64) -> Vec<Digit> {
     use Digit::*;
     if num >= 200 {
-        let last_hundred_arr: Vec<Digit> = if num % 100 == 0 {
+        let mut ans = less_than_100_nun1_elided(num / 100);
+        ans.push(Num100);
+        ans.extend(&if num % 100 == 0 {
             vec![]
         } else {
-            to_digits_sub(num % 100)
-        };
-
-        let mut ans = to_digits_sub(num / 100);
-        ans.push(Num100);
-        ans.extend(&last_hundred_arr);
+            less_than_100_nun1_elided(num % 100)
+        });
         return ans;
     } else if num >= 100 {
-        let last_hundred_arr: Vec<Digit> = if num % 100 == 0 {
+        let mut ans = vec![Num100];
+        ans.extend(&if num % 100 == 0 {
             vec![]
         } else {
-            to_digits(num % 100)
-        };
-        let mut ans = vec![Num100];
-        ans.extend(&last_hundred_arr);
+            less_than_10000(num % 100)
+        });
         return ans;
     } else if num < 0 {
         let mut ans = vec![Neg];
-        ans.extend(&to_digits(-num));
+        ans.extend(&less_than_10000(-num));
         return ans;
     } else if num == 0 {
         return vec![Num00];
@@ -82,7 +79,7 @@ pub fn to_digits(num: i64) -> Vec<Digit> {
 }
 
 // -6848 should be 下六八百四八, not 下六十八百四十八. This function thus converts 68 to 六八, not 六十八.
-fn to_digits_sub(num: i64) -> Vec<Digit> {
+fn less_than_100_nun1_elided(num: i64) -> Vec<Digit> {
     use Digit::*;
     assert!(num < 100);
     assert!(num > 0);
