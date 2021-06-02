@@ -1918,6 +1918,6 @@ fn test_() {
     ];
 
     for (num, s) in TEST_CASES.iter() {
-        assert_eq!(analyze(&s.chars().collect::<Vec<_>>()), Some(*num))
+        assert_eq!(str_to_num(s), Some(*num))
     }
 }

@@ -1,11 +1,15 @@
 mod tests;
 
-pub fn analyze(s: &[char]) -> Option<i64> {
+pub fn chars_to_num(s: &[char]) -> Option<i64> {
     match s {
         ['無'] => Some(0),
         ['下', tail @ ..] => positive(tail).map(|a| -a),
         simple => positive(simple),
     }
+}
+
+pub fn str_to_num(s: &str) -> Option<i64> {
+    chars_to_num(&s.chars().collect::<Vec<_>>())
 }
 
 fn less_than_10(s: char) -> Option<i64> {
