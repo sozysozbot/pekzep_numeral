@@ -1,5 +1,5 @@
 mod tests;
-use crate::digit::Digit::*;
+use crate::digit::Digit::{Neg, N0, N1, N10, N100, N2, N3, N4, N5, N6, N7, N8, N9};
 use crate::digit::VecDigits;
 
 /// Example:
@@ -30,6 +30,9 @@ where
 /// use pekzep_numeral::num_to_chars_preferred::*;
 /// assert_eq!(String::from(less_than_10000(6848)), "六八百四八");
 /// ```
+/// # Panics
+/// Panics if the input is out of the [1, 10000) range.
+#[must_use]
 pub fn less_than_10000(num: i64) -> VecDigits {
     assert!(num < 10000);
     assert!(num > 0);
@@ -54,6 +57,9 @@ pub fn less_than_10000(num: i64) -> VecDigits {
     less_than_100(num)
 }
 
+/// # Panics
+/// Panics if the input is out of the [1, 10) range.
+#[must_use]
 pub fn less_than_10(num: i64) -> VecDigits {
     match num {
         1 => VecDigits(vec![N1]),
@@ -69,6 +75,9 @@ pub fn less_than_10(num: i64) -> VecDigits {
     }
 }
 
+/// # Panics
+/// Panics if the input is out of the [1, 100) range.
+#[must_use]
 pub fn less_than_100(num: i64) -> VecDigits {
     assert!(num < 100);
     assert!(num > 0);
@@ -91,7 +100,9 @@ pub fn less_than_100(num: i64) -> VecDigits {
 }
 
 /// -6848 should be 下六八百四八, not 下六十八百四十八. This function converts 68 to 六八, not 六十八 to account for such subcases.
-/// Example:
+/// # Panics
+/// Panics if the input is out of the [1, 100) range.
+/// # Example
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
 /// assert_eq!(String::from(less_than_100_nun1_elided(3)), "三");
@@ -100,6 +111,7 @@ pub fn less_than_100(num: i64) -> VecDigits {
 /// assert_eq!(String::from(less_than_100_nun1_elided(60)),"六十");
 /// assert_eq!(String::from(less_than_100_nun1_elided(68)),"六八");
 /// ```
+#[must_use]
 pub fn less_than_100_nun1_elided(num: i64) -> VecDigits {
     assert!(num < 100);
     assert!(num > 0);

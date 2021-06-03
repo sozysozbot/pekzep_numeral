@@ -20,7 +20,7 @@ pub enum Digit {
 }
 
 impl From<Digit> for char {
-    fn from(s: Digit) -> char {
+    fn from(s: Digit) -> Self {
         match s {
             Digit::N0 => '無',
             Digit::N1 => '一',
@@ -71,19 +71,19 @@ impl VecDigits {
         self.0.push(value)
     }
 
-    pub fn extend(&mut self, v: &VecDigits) {
+    pub fn extend(&mut self, v: &Self) {
         self.0.extend(&v.0)
     }
 }
 
 impl From<VecDigits> for String {
-    fn from(v: VecDigits) -> String {
+    fn from(v: VecDigits) -> Self {
         let chars: Vec<char> = v.into();
         chars.iter().collect()
     }
 }
 impl From<VecDigits> for Vec<char> {
-    fn from(v: VecDigits) -> Vec<char> {
-        v.0.into_iter().map(|a| a.into()).collect::<Vec<char>>()
+    fn from(v: VecDigits) -> Self {
+        v.0.into_iter().map(|a| a.into()).collect::<Self>()
     }
 }

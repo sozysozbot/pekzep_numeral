@@ -1,4 +1,4 @@
-fn less_than_10(s: char) -> Option<i64> {
+const fn less_than_10(s: char) -> Option<i64> {
     match s {
         '一' => Some(1),
         '二' => Some(2),

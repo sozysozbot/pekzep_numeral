@@ -1,5 +1,8 @@
+#![warn(clippy::pedantic, clippy::nursery)]
+#![allow(clippy::non_ascii_literal)]
 mod tests;
 
+#[must_use]
 pub fn chars_to_num(s: &[char]) -> Option<i64> {
     match s {
         ['無'] => Some(0),
@@ -17,6 +20,7 @@ pub fn chars_to_num(s: &[char]) -> Option<i64> {
 /// assert_eq!(str_to_num("万二三百四五"), Some(12345));
 /// assert_eq!(str_to_num("一万二千三百四十五"), None);
 /// ```
+#[must_use]
 pub fn str_to_num(s: &str) -> Option<i64> {
     chars_to_num(&s.chars().collect::<Vec<_>>())
 }
