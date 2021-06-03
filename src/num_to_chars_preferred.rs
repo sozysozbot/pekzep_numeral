@@ -1,39 +1,37 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Digit {
-    Num00,
-    Num01,
-    Num02,
-    Num03,
-    Num04,
-    Num05,
-    Num06,
-    Num07,
-    Num08,
-    Num09,
-    Num10,
-    Neg,
-    Num100,
-}
-
-pub fn pekzep_integer(num: i64) -> Vec<Digit> {
+/// Example:
+/// ```
+/// use pekzep_numeral::num_to_chars_preferred::*;
+/// assert_eq!(pos_neg_zero(less_than_10000, 234), vec!['二', '百', '三', '四']);
+/// assert_eq!(pos_neg_zero(less_than_10000, -6848), vec!['下', '六', '八', '百', '四', '八']);
+/// assert_ne!(pos_neg_zero(less_than_10000, -6848), vec!['下', '六', '十', '八', '百', '四', '十', '八']);
+/// ```
+pub fn pos_neg_zero<T>(f: T, num: i64) -> Vec<char>
+where
+    T: Fn(i64) -> Vec<char>,
+{
     use std::cmp::Ordering;
-    use Digit::*;
     match num.cmp(&0) {
-        Ordering::Greater => less_than_10000(num),
-        Ordering::Equal => vec![Num00],
+        Ordering::Greater => f(num),
+        Ordering::Equal => vec!['無'],
         Ordering::Less => {
-            let mut ans = vec![Neg];
-            ans.extend(&less_than_10000(-num));
+            let mut ans = vec!['下'];
+            ans.extend(&f(-num));
             ans
         }
     }
 }
 
-pub fn less_than_10000(num: i64) -> Vec<Digit> {
-    use Digit::*;
+/// Example:
+/// ```
+/// use pekzep_numeral::num_to_chars_preferred::*;
+/// assert_eq!(less_than_10000(6848), vec!['六', '八', '百', '四', '八']);
+/// ```
+pub fn less_than_10000(num: i64) -> Vec<char> {
+    assert!(num < 10000);
+    assert!(num > 0);
     if num >= 200 {
         let mut ans = less_than_100_nun1_elided(num / 100);
-        ans.push(Num100);
+        ans.push('百');
         ans.extend(&if num % 100 == 0 {
             vec![]
         } else {
@@ -41,7 +39,7 @@ pub fn less_than_10000(num: i64) -> Vec<Digit> {
         });
         return ans;
     } else if num >= 100 {
-        let mut ans = vec![Num100];
+        let mut ans = vec!['百'];
         ans.extend(&if num % 100 == 0 {
             vec![]
         } else {
@@ -49,36 +47,38 @@ pub fn less_than_10000(num: i64) -> Vec<Digit> {
         });
         return ans;
     }
+    less_than_100(num)
+}
 
-    let last_digit_arr: Vec<Digit> = match num % 10 {
-        1 => vec![Num01],
-        2 => vec![Num02],
-        3 => vec![Num03],
-        4 => vec![Num04],
-        5 => vec![Num05],
-        6 => vec![Num06],
-        7 => vec![Num07],
-        8 => vec![Num08],
-        9 => vec![Num09],
-        _ => vec![],
+pub fn less_than_10(num: i64) -> Vec<char> {
+    match num {
+        1 => vec!['一'],
+        2 => vec!['二'],
+        3 => vec!['三'],
+        4 => vec!['四'],
+        5 => vec!['五'],
+        6 => vec!['六'],
+        7 => vec!['七'],
+        8 => vec!['八'],
+        9 => vec!['九'],
+        _ => panic!(),
+    }
+}
+
+pub fn less_than_100(num: i64) -> Vec<char> {
+    assert!(num < 100);
+    assert!(num > 0);
+
+    let last_digit_arr: Vec<char> = match num % 10 {
+        0 => vec![],
+        a => less_than_10(a),
     };
-    if num >= 20 {
+    if num >= 10 {
         let mut ans = match num / 10 {
-            2 => vec![Num02],
-            3 => vec![Num03],
-            4 => vec![Num04],
-            5 => vec![Num05],
-            6 => vec![Num06],
-            7 => vec![Num07],
-            8 => vec![Num08],
-            9 => vec![Num09],
-            _ => vec![],
+            1 => vec![],
+            a => less_than_10(a),
         };
-        ans.push(Num10);
-        ans.extend(&last_digit_arr);
-        ans
-    } else if num >= 10 {
-        let mut ans = vec![Num10];
+        ans.push('十');
         ans.extend(&last_digit_arr);
         ans
     } else {
@@ -86,55 +86,36 @@ pub fn less_than_10000(num: i64) -> Vec<Digit> {
     }
 }
 
-// -6848 should be 下六八百四八, not 下六十八百四十八. This function thus converts 68 to 六八, not 六十八.
-fn less_than_100_nun1_elided(num: i64) -> Vec<Digit> {
-    use Digit::*;
+/// -6848 should be 下六八百四八, not 下六十八百四十八. This function converts 68 to 六八, not 六十八 to account for such subcases.
+/// Example:
+/// ```
+/// use pekzep_numeral::num_to_chars_preferred::*;
+/// assert_eq!(less_than_100_nun1_elided(68), vec!['六', '八'])
+/// ```
+pub fn less_than_100_nun1_elided(num: i64) -> Vec<char> {
     assert!(num < 100);
     assert!(num > 0);
 
     if num % 10 == 0 {
         match num {
-            10 => vec![Num10],
-            20 => vec![Num02, Num10],
-            30 => vec![Num03, Num10],
-            40 => vec![Num04, Num10],
-            50 => vec![Num05, Num10],
-            60 => vec![Num06, Num10],
-            70 => vec![Num07, Num10],
-            80 => vec![Num08, Num10],
-            90 => vec![Num09, Num10],
+            10 => vec!['十'],
+            20 => vec!['二', '十'],
+            30 => vec!['三', '十'],
+            40 => vec!['四', '十'],
+            50 => vec!['五', '十'],
+            60 => vec!['六', '十'],
+            70 => vec!['七', '十'],
+            80 => vec!['八', '十'],
+            90 => vec!['九', '十'],
             _ => panic!(),
         }
     } else {
-        let last_digit_arr: Vec<Digit> = match num % 10 {
-            1 => vec![Num01],
-            2 => vec![Num02],
-            3 => vec![Num03],
-            4 => vec![Num04],
-            5 => vec![Num05],
-            6 => vec![Num06],
-            7 => vec![Num07],
-            8 => vec![Num08],
-            9 => vec![Num09],
-            _ => vec![],
-        };
-
-        if num >= 20 {
+        let last_digit_arr: Vec<char> = less_than_10(num % 10);
+        if num >= 10 {
             let mut ans = match num / 10 {
-                2 => vec![Num02],
-                3 => vec![Num03],
-                4 => vec![Num04],
-                5 => vec![Num05],
-                6 => vec![Num06],
-                7 => vec![Num07],
-                8 => vec![Num08],
-                9 => vec![Num09],
-                _ => vec![],
+                1 => vec![],
+                a => less_than_10(a),
             };
-            ans.extend(&last_digit_arr);
-            ans
-        } else if num >= 10 {
-            let mut ans = vec![Num10];
             ans.extend(&last_digit_arr);
             ans
         } else {
