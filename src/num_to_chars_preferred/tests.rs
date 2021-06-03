@@ -16,9 +16,7 @@ fn less_than_10000() {
     ];
 
     for (num, s) in TEST_CASES.iter() {
-        assert_eq!(
-            pos_neg_zero(less_than_10000, *num),
-            s.chars().collect::<Vec<_>>()
-        )
+        let s2: String = pos_neg_zero(less_than_10000, *num).into();
+        assert_eq!(&s2, *s)
     }
 }

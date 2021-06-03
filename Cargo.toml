@@ -11,3 +11,4 @@ repository = "https://github.com/sozysozbot/pekzep_numeral"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# pekzep_syllable = "0.1.2"

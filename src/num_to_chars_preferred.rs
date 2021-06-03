@@ -1,22 +1,24 @@
 mod tests;
+use crate::digit::Digit::*;
+use crate::digit::VecDigits;
 
 /// Example:
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
-/// assert_eq!(pos_neg_zero(less_than_10000, 234), vec!['二', '百', '三', '四']);
-/// assert_eq!(pos_neg_zero(less_than_10000, -6848), vec!['下', '六', '八', '百', '四', '八']);
-/// assert_ne!(pos_neg_zero(less_than_10000, -6848), vec!['下', '六', '十', '八', '百', '四', '十', '八']);
+/// assert_eq!(String::from(pos_neg_zero(less_than_10000, 234)), "二百三四");
+/// assert_eq!(String::from(pos_neg_zero(less_than_10000, -6848)), "下六八百四八");
+/// assert_ne!(String::from(pos_neg_zero(less_than_10000, -6848)), "下六十八百四十八");
 /// ```
-pub fn pos_neg_zero<T>(f: T, num: i64) -> Vec<char>
+pub fn pos_neg_zero<T>(f: T, num: i64) -> VecDigits
 where
-    T: Fn(i64) -> Vec<char>,
+    T: Fn(i64) -> VecDigits,
 {
     use std::cmp::Ordering;
     match num.cmp(&0) {
         Ordering::Greater => f(num),
-        Ordering::Equal => vec!['無'],
+        Ordering::Equal => VecDigits(vec![N0]),
         Ordering::Less => {
-            let mut ans = vec!['下'];
+            let mut ans = VecDigits(vec![Neg]);
             ans.extend(&f(-num));
             ans
         }
@@ -26,24 +28,24 @@ where
 /// Example:
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
-/// assert_eq!(less_than_10000(6848), vec!['六', '八', '百', '四', '八']);
+/// assert_eq!(String::from(less_than_10000(6848)), "六八百四八");
 /// ```
-pub fn less_than_10000(num: i64) -> Vec<char> {
+pub fn less_than_10000(num: i64) -> VecDigits {
     assert!(num < 10000);
     assert!(num > 0);
     if num >= 200 {
         let mut ans = less_than_100_nun1_elided(num / 100);
-        ans.push('百');
+        ans.push(N100);
         ans.extend(&if num % 100 == 0 {
-            vec![]
+            VecDigits(vec![])
         } else {
             less_than_100_nun1_elided(num % 100)
         });
         return ans;
     } else if num >= 100 {
-        let mut ans = vec!['百'];
+        let mut ans = VecDigits(vec![N100]);
         ans.extend(&if num % 100 == 0 {
-            vec![]
+            VecDigits(vec![])
         } else {
             less_than_10000(num % 100)
         });
@@ -52,35 +54,35 @@ pub fn less_than_10000(num: i64) -> Vec<char> {
     less_than_100(num)
 }
 
-pub fn less_than_10(num: i64) -> Vec<char> {
+pub fn less_than_10(num: i64) -> VecDigits {
     match num {
-        1 => vec!['一'],
-        2 => vec!['二'],
-        3 => vec!['三'],
-        4 => vec!['四'],
-        5 => vec!['五'],
-        6 => vec!['六'],
-        7 => vec!['七'],
-        8 => vec!['八'],
-        9 => vec!['九'],
+        1 => VecDigits(vec![N1]),
+        2 => VecDigits(vec![N2]),
+        3 => VecDigits(vec![N3]),
+        4 => VecDigits(vec![N4]),
+        5 => VecDigits(vec![N5]),
+        6 => VecDigits(vec![N6]),
+        7 => VecDigits(vec![N7]),
+        8 => VecDigits(vec![N8]),
+        9 => VecDigits(vec![N9]),
         _ => panic!(),
     }
 }
 
-pub fn less_than_100(num: i64) -> Vec<char> {
+pub fn less_than_100(num: i64) -> VecDigits {
     assert!(num < 100);
     assert!(num > 0);
 
-    let last_digit_arr: Vec<char> = match num % 10 {
-        0 => vec![],
+    let last_digit_arr: VecDigits = match num % 10 {
+        0 => VecDigits(vec![]),
         a => less_than_10(a),
     };
     if num >= 10 {
         let mut ans = match num / 10 {
-            1 => vec![],
+            1 => VecDigits(vec![]),
             a => less_than_10(a),
         };
-        ans.push('十');
+        ans.push(N10);
         ans.extend(&last_digit_arr);
         ans
     } else {
@@ -92,34 +94,34 @@ pub fn less_than_100(num: i64) -> Vec<char> {
 /// Example:
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
-/// assert_eq!(less_than_100_nun1_elided(3), vec!['三']);
-/// assert_eq!(less_than_100_nun1_elided(10), vec!['十']);
-/// assert_eq!(less_than_100_nun1_elided(12), vec!['十', '二']);
-/// assert_eq!(less_than_100_nun1_elided(60), vec!['六', '十']);
-/// assert_eq!(less_than_100_nun1_elided(68), vec!['六', '八']);
+/// assert_eq!(String::from(less_than_100_nun1_elided(3)), "三");
+/// assert_eq!(String::from(less_than_100_nun1_elided(10)),"十");
+/// assert_eq!(String::from(less_than_100_nun1_elided(12)),"十二");
+/// assert_eq!(String::from(less_than_100_nun1_elided(60)),"六十");
+/// assert_eq!(String::from(less_than_100_nun1_elided(68)),"六八");
 /// ```
-pub fn less_than_100_nun1_elided(num: i64) -> Vec<char> {
+pub fn less_than_100_nun1_elided(num: i64) -> VecDigits {
     assert!(num < 100);
     assert!(num > 0);
 
     if num % 10 == 0 {
         match num / 10 {
-            1 => vec!['十'],
-            2 => vec!['二', '十'],
-            3 => vec!['三', '十'],
-            4 => vec!['四', '十'],
-            5 => vec!['五', '十'],
-            6 => vec!['六', '十'],
-            7 => vec!['七', '十'],
-            8 => vec!['八', '十'],
-            9 => vec!['九', '十'],
+            1 => VecDigits(vec![N10]),
+            2 => VecDigits(vec![N2, N10]),
+            3 => VecDigits(vec![N3, N10]),
+            4 => VecDigits(vec![N4, N10]),
+            5 => VecDigits(vec![N5, N10]),
+            6 => VecDigits(vec![N6, N10]),
+            7 => VecDigits(vec![N7, N10]),
+            8 => VecDigits(vec![N8, N10]),
+            9 => VecDigits(vec![N9, N10]),
             _ => panic!(),
         }
     } else {
-        let last_digit_arr: Vec<char> = less_than_10(num % 10);
+        let last_digit_arr: VecDigits = less_than_10(num % 10);
         if num >= 10 {
             let mut ans = match num / 10 {
-                1 => vec!['十'],
+                1 => VecDigits(vec![N10]),
                 a => less_than_10(a),
             };
             ans.extend(&last_digit_arr);
