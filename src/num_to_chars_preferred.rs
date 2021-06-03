@@ -1,3 +1,30 @@
+mod tests {
+    #[test]
+    fn less_than_10000() {
+        use crate::num_to_chars_preferred::*;
+        const TEST_CASES: [(i64, &str); 11] = [
+            (1, "一"),
+            (10, "十"),
+            (11, "十一"),
+            (23, "二十三"),
+            (120, "百二十"),
+            (123, "百二十三"), /* In this position, non-elision is preferred */
+            (234, "二百三四"),
+            (1234, "十二百三四"),
+            (1230, "十二百三十"),
+            (1210, "十二百十"),
+            (-6848, "下六八百四八"),
+        ];
+
+        for (num, s) in TEST_CASES.iter() {
+            assert_eq!(
+                pos_neg_zero(less_than_10000, *num),
+                s.chars().collect::<Vec<_>>()
+            )
+        }
+    }
+}
+
 /// Example:
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
@@ -90,30 +117,34 @@ pub fn less_than_100(num: i64) -> Vec<char> {
 /// Example:
 /// ```
 /// use pekzep_numeral::num_to_chars_preferred::*;
-/// assert_eq!(less_than_100_nun1_elided(68), vec!['六', '八'])
+/// assert_eq!(less_than_100_nun1_elided(3), vec!['三']);
+/// assert_eq!(less_than_100_nun1_elided(10), vec!['十']);
+/// assert_eq!(less_than_100_nun1_elided(12), vec!['十', '二']);
+/// assert_eq!(less_than_100_nun1_elided(60), vec!['六', '十']);
+/// assert_eq!(less_than_100_nun1_elided(68), vec!['六', '八']);
 /// ```
 pub fn less_than_100_nun1_elided(num: i64) -> Vec<char> {
     assert!(num < 100);
     assert!(num > 0);
 
     if num % 10 == 0 {
-        match num {
-            10 => vec!['十'],
-            20 => vec!['二', '十'],
-            30 => vec!['三', '十'],
-            40 => vec!['四', '十'],
-            50 => vec!['五', '十'],
-            60 => vec!['六', '十'],
-            70 => vec!['七', '十'],
-            80 => vec!['八', '十'],
-            90 => vec!['九', '十'],
+        match num / 10 {
+            1 => vec!['十'],
+            2 => vec!['二', '十'],
+            3 => vec!['三', '十'],
+            4 => vec!['四', '十'],
+            5 => vec!['五', '十'],
+            6 => vec!['六', '十'],
+            7 => vec!['七', '十'],
+            8 => vec!['八', '十'],
+            9 => vec!['九', '十'],
             _ => panic!(),
         }
     } else {
         let last_digit_arr: Vec<char> = less_than_10(num % 10);
         if num >= 10 {
             let mut ans = match num / 10 {
-                1 => vec![],
+                1 => vec!['十'],
                 a => less_than_10(a),
             };
             ans.extend(&last_digit_arr);
