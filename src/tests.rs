@@ -1917,7 +1917,7 @@ fn test_() {
         (9999, "九九百九九"),
     ];
 
-    for (num, s) in TEST_CASES.iter() {
-        assert_eq!(str_to_num(s), Some(*num))
+    for (num, s) in &TEST_CASES {
+        assert_eq!(str_to_num(s), Some(*num));
     }
 }

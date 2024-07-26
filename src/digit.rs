@@ -68,11 +68,11 @@ pub struct VecDigits(pub Vec<Digit>);
 
 impl VecDigits {
     pub fn push(&mut self, value: Digit) {
-        self.0.push(value)
+        self.0.push(value);
     }
 
     pub fn extend(&mut self, v: &Self) {
-        self.0.extend(&v.0)
+        self.0.extend(&v.0);
     }
 }
 
@@ -84,6 +84,6 @@ impl From<VecDigits> for String {
 }
 impl From<VecDigits> for Vec<char> {
     fn from(v: VecDigits) -> Self {
-        v.0.into_iter().map(|a| a.into()).collect::<Self>()
+        v.0.into_iter().map(std::convert::Into::into).collect::<Self>()
     }
 }

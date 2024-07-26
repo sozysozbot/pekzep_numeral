@@ -72,17 +72,11 @@ fn less_than_10000_0000(input: &[char]) -> Option<i64> {
 }
 
 pub fn less_than_10000_or_elided(s: &[char]) -> Option<i64> {
-    match less_than_100_nun1_elided(s) {
-        Some(n) => Some(n),
-        None => less_than_10000(s),
-    }
+    less_than_100_nun1_elided(s).map_or_else(|| less_than_10000(s), Some)
 }
 
 pub fn less_than_10000_0000_or_elided(s: &[char]) -> Option<i64> {
-    match less_than_100_nun1_elided(s) {
-        Some(n) => Some(n),
-        None => less_than_10000_0000(s),
-    }
+    less_than_100_nun1_elided(s).map_or_else(|| less_than_10000_0000(s), Some)
 }
 
 pub fn less_than_10000(s: &[char]) -> Option<i64> {

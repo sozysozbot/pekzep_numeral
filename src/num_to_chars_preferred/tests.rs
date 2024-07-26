@@ -17,7 +17,7 @@ fn less_than_10000() {
 
     for (num, s) in &TEST_CASES {
         let s2: String = pos_neg_zero(less_than_10000, *num).into();
-        assert_eq!(&s2, *s)
+        assert_eq!(&s2, *s);
     }
 }
 
@@ -214,7 +214,7 @@ fn less_than_10000_cerke_online_img_path() {
         (9996, vec!["num09", "num09", "num100", "num09", "num06"]),
     ];
 
-    for (num, s) in test_cases.iter() {
+    for (num, s) in &test_cases {
         let s2: Vec<Digit> = pos_neg_zero(less_than_10000, *num).0;
         assert_eq!(
             s2.iter()
@@ -237,6 +237,6 @@ fn less_than_10000_cerke_online_img_path() {
                 })
                 .collect::<Vec<_>>(),
             *s
-        )
+        );
     }
 }
